@@ -1,29 +1,26 @@
 # models/job_model.py
 from utilities.database import get_db
 import uuid
+from flask import jsonify
 
 class Job:
-    def __init__(self, filename):
-        self.id = str(uuid.uuid4())
-        self.filename = filename
-        self.status = 'pending'
-        self.error = None
-        self.s3_url = ''
-
+    def save(filename):
+        id = str(uuid.uuid4())
 
         db = get_db()
         db.execute('''
             INSERT INTO jobs (id, filename)
             VALUES (?, ?)
-        ''', (self.id, self.filename))
-
+        ''', (id, filename))
         db.commit()
-
-    def to_dict(self):
-        return {
-            'job_id': self.job_id,
-            'filename': self.filename,
-            'status': self.status,
-            'error': self.error,
-            's3_url': self.s3_url
-        }
+ 
+        return Job.get(id)
+    
+    def get(id):
+        db = get_db()
+        cur = db.execute('''
+            SELECT * FROM jobs WHERE id = ?
+        ''', (id,))
+        row = [dict((cur.description[i][0], value) \
+               for i, value in enumerate(row)) for row in cur.fetchall()]
+        return row[0]

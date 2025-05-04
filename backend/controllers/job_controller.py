@@ -1,4 +1,3 @@
-import uuid
 import os
 from flask import request, jsonify, current_app
 from models.job_model import Job
@@ -18,5 +17,15 @@ def create_job():
         file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 
                                  updated_filename)
         file.save(file_path)
-        Job(updated_filename)
-        return jsonify({"message": "Job created successfully"}), 200
+
+        new_job = Job.save(filename=updated_filename)
+        return jsonify(new_job), 200
+
+def get_job(job_id):
+    if not job_id:
+        return jsonify({'error': 'Missing job_id parameter'}), 400
+
+    res = Job.get(job_id)
+    if not res:
+        return jsonify({'error': 'Job not found'}), 404
+    return jsonify(res), 200
