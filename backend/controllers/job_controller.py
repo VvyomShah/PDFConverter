@@ -2,6 +2,7 @@ import os
 from flask import request, jsonify, current_app
 from models.job_model import Job
 import time
+from services.conversion_service import convert_pptx_to_pdf
 
 
 def create_job():
@@ -19,6 +20,10 @@ def create_job():
         file.save(file_path)
 
         new_job = Job.save(filename=updated_filename)
+
+        output_path = os.path.join(current_app.config['OUTPUT_FOLDER'], updated_filename.replace('.pptx', '.pdf'))
+        convert_pptx_to_pdf(file_path, output_path)
+        
         return jsonify(new_job), 200
 
 def get_job(job_id):
