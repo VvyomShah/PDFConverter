@@ -13,19 +13,14 @@ def close_db(e=None):
         db.close()
 
 def init_db(app):
+    sql_script = ""
+
     with app.app_context():
+        with open(current_app.config['SCHEMA_PATH'], 'r') as sql_file:
+            sql_script = sql_file.read()
+
         db = get_db()
-        db.execute('''
-            CREATE TABLE IF NOT EXISTS jobs (
-                id TEXT PRIMARY KEY,
-                filename TEXT NOT NULL,
-                status TEXT NOT NULL,
-                error TEXT,
-                s3_url TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
-        ''')
+        db.execute(sql_script)
         db.commit()
 
 def set_db_context(app):
