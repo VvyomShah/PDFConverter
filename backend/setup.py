@@ -5,9 +5,7 @@ from utilities.database import set_db_context
 
 def create_app():
     app = Flask(__name__)
-    app.config['UPLOAD_FOLDER'] = 'storage/uploads'
-    app.config['OUTPUT_FOLDER'] = 'storage/outputs'
-    app.config['SQLITE_DB'] = 'backend/jobs.db'
+    app.config.from_pyfile('config.py')
 
     set_db_context(app)
     register_job_routes(app)
