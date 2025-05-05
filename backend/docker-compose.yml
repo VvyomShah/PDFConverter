@@ -1,12 +1,28 @@
-
 services:
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  # celery:
+  #   image: python:3.10
+  #   command: sh -c "pip install -r /app/requirements.txt && celery -A celery_worker.celery worker --loglevel=info"
+  #   volumes:
+  #     - .:/app
+  #   working_dir: /app
+  #   depends_on:
+  #     - redis
+  #   environment:
+  #     - CELERY_BROKER_URL=redis://redis:6379/0
+  #     - CELERY_RESULT_BACKEND=redis://redis:6379/0
+
   unoserver:
     image: libreofficedocker/libreoffice-unoserver:3.18
     container_name: unoserver
     ports:
-      - 2004:2004  # unoconv API exposed on port 2004
+      - "2004:2004"
     environment:
       - DISPLAY=:99
     volumes:
-          - ./storage/uploads:/storage/uploads
-          - ./storage/outputs:/storage/outputs
+      - ./storage/uploads:/storage/uploads
+      - ./storage/outputs:/storage/outputs

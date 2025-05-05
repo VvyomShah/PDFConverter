@@ -2,6 +2,7 @@
 from flask import Flask
 from routes.job_routes import register_job_routes
 from utilities.database import set_db_context
+from celery_worker import make_celery
 
 def create_app():
     app = Flask(__name__)
@@ -9,4 +10,6 @@ def create_app():
 
     set_db_context(app)
     register_job_routes(app)
+    make_celery(app)
+    
     return app

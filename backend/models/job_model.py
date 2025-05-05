@@ -23,4 +23,22 @@ class Job:
         ''', (id,))
         row = [dict((cur.description[i][0], value) \
                for i, value in enumerate(row)) for row in cur.fetchall()]
+        print(row[0])
         return row[0]
+    
+    def update(id, updates):
+        """Update fields of an existing job."""
+        db = get_db()
+
+        # Dynamically build the SQL UPDATE statement
+        set_clause = ', '.join([f"{field} = ?" for field in updates.keys()])
+        values = list(updates.values()) + [id]
+
+        # Execute the update query
+        db.execute(f'''
+            UPDATE jobs SET {set_clause} WHERE id = ?
+        ''', values)
+        db.commit()
+
+        # Return the updated job
+        return Job.get(id)
