@@ -30,6 +30,7 @@ def convert_pptx_to_pdf(id, input_path, output_path):
         })
         raise Exception(f"Conversion failed: {response.status_code} - {response.text}")
     
+    download_url = f"http://localhost:5500/download/{output_path.split('/')[-1]}"
     Job.update(id, {
             "status": "completed",
             "s3_url": output_path
@@ -37,4 +38,4 @@ def convert_pptx_to_pdf(id, input_path, output_path):
     with open(output_path, 'wb') as out_file:
         out_file.write(response.content)
 
-    return {"status": "success", "output_path": output_path}
+    return {"status": "success", "output_path": download_url}

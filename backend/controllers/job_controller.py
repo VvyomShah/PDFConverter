@@ -36,7 +36,6 @@ def get_job(job_id):
         return jsonify({'error': 'Job not found'}), 404
     
     result = AsyncResult(job_id, app=celery)
-    print(result)
 
     response = {
         "job_id": job_id,
@@ -47,7 +46,8 @@ def get_job(job_id):
     }
 
     if result.state == 'SUCCESS':
-        response["output_file"] = result.result.get("output")
+        response["s3_url"] = f"http://localhost:5500/download/{job['s3_url'].split('/')[-1]}"
+
         return jsonify(response), 200
     elif result.state == 'FAILURE':
         response["error"] = str(result.result)

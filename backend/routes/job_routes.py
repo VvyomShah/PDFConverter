@@ -1,4 +1,3 @@
-from flask import Blueprint
 from controllers import job_controller
 
 def register_job_routes(app):
