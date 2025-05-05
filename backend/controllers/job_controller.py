@@ -5,36 +5,23 @@ from celery.result import AsyncResult
 from celery_worker import celery
 from models.job_model import Job
 from services.conversion_service import convert_pptx_to_pdf, add
+from middleware.validation import require_file, validate_job_id
 
-
+@require_file('pptx')
 def create_job():
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file uploaded'}), 400
-      
     file = request.files['file']
-    if not file.filename.endswith('.pptx'):
-        return jsonify({'error': 'Only .pptx files allowed'}), 400
+    updated_filename = str(int(time.time())) + '_' + file.filename
+    file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], updated_filename)
+    file.save(file_path)
 
-    if file:
-        updated_filename = str(int(time.time()))+'_'+file.filename
-        file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 
-                                 updated_filename)
-        file.save(file_path)
+    new_job = Job.save(filename=updated_filename)
+    output_path = os.path.join(current_app.config['OUTPUT_FOLDER'], updated_filename.replace('.pptx', '.pdf'))
+    convert_pptx_to_pdf.apply_async(args=[new_job['id'], file_path, output_path], task_id=str(new_job['id']))
 
-        new_job = Job.save(filename=updated_filename)
+    return jsonify(new_job), 200
 
-        output_path = os.path.join(current_app.config['OUTPUT_FOLDER'], updated_filename.replace('.pptx', '.pdf'))
-        convert_pptx_to_pdf.apply_async(args=[new_job['id'], file_path, output_path], task_id=str(new_job['id']))
-
-        return jsonify(new_job), 200
-
-def get_job(job_id):
-    if not job_id:
-        return jsonify({'error': 'Missing job_id parameter'}), 400
-    job = Job.get(job_id)
-    if not job:
-        return jsonify({'error': 'Job not found'}), 404
-    
+@validate_job_id
+def get_job(job_id, job):
     result = AsyncResult(job_id, app=celery)
 
     response = {
@@ -47,7 +34,6 @@ def get_job(job_id):
 
     if result.state == 'SUCCESS':
         response["s3_url"] = f"http://localhost:5500/download/{job['s3_url'].split('/')[-1]}"
-
         return jsonify(response), 200
     elif result.state == 'FAILURE':
         response["error"] = str(result.result)
