@@ -1,4 +1,4 @@
-# 📄 File Conversion App
+# 📄 PPTX to PDF Conversion App
 
 A full-stack application for converting .PPTX to .PDF. Users can upload files, track conversion status in real time, and download the converted files.
 
@@ -53,19 +53,21 @@ bun run dev
 
 ## API Endpoints
 
+```
 Request: GET /job/:jobID
-Response: {
+Sample response: {
     "created_at": "2025-05-05 03:48:34",
     "filename": "1746416914_Sample PPTX from Google Search.pptx",
     "job_id": "ca584bd1-8418-44ef-a08b-573284ff103a",
-    "output_file": null,
     "s3_url": "http://localhost:5500/download/1746416914_Sample PPTX from Google Search.pdf",
     "status": "SUCCESS"
 }
+```
 
+```
 Request: POST /job
 Body: {File: .pptx file}
-Response: {
+Sample response: {
     "created_at": "2025-05-06 00:09:15",
     "error": null,
     "filename": "1746490155_Sample PPTX from Google Search.pptx",
@@ -74,3 +76,4 @@ Response: {
     "status": "pending",
     "updated_at": "2025-05-06 00:09:15"
 }
+```
