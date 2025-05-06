@@ -37,6 +37,7 @@ const JobConversion: FC = () => {
         setJobId(response.id);
       } catch (error) {
         console.error('Conversion failed:', error);
+        alert('Some error occuerred. Please try again.')
       }
     }
   };
