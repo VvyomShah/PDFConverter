@@ -5,7 +5,7 @@ A full-stack application for converting .PPTX to .PDF. Users can upload files, t
 ## 🔧 Tech Stack
 
 - **Frontend**: React, TypeScript, TailwindCSS, React Query
-- **Backend**: Node.js, Express, AWS S3, Redis, Celery
+- **Backend**: Flask, Redis, Celery, Unoserver
 - **File Storage**: SQLite3, Local disk store
 - **Job Queue**: Redis
 
