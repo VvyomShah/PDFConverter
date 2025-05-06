@@ -1,8 +1,8 @@
-import {PowerPointToPdfConverter} from "@/components/PowerPointToPdfConverter";
-
+'use client'
+import JobConversion from "@/components/JobConversion";
 const Home = async () => (
-  <main className="w-full max-w-[420px]">
-    <PowerPointToPdfConverter />
+  <main className="w-[400px] h-[400px]">
+    <JobConversion />
   </main>
 );
 
