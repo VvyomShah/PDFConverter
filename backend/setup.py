@@ -1,5 +1,6 @@
 # app.py
 from flask import Flask
+from flask_cors import CORS, cross_origin
 from routes.job_routes import register_job_routes
 from routes.download_routes import register_download_routes
 from utilities.database import set_db_context
@@ -13,5 +14,6 @@ def create_app():
     register_job_routes(app)
     register_download_routes(app)
     make_celery(app)
+    CORS(app, resources={r"/*": {"origins": "*", "methods": ["GET", "POST"]}})
     
     return app
